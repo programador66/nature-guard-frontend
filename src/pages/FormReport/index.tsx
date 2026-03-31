@@ -89,7 +89,7 @@ export default function FormReport() {
             <BackButton onClick={() => navigate(-1)}>
                 Cancelar
             </BackButton>
-            <Button>Continuar</Button>
+            <Button onClick={() => navigate('/report/details')}>Continuar</Button>
         </ButtonContainer>
       </Right>
     </Container>
