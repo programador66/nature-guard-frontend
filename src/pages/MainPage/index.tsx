@@ -47,8 +47,8 @@ function MainPage() {
             </Description>
 
             <Actions>
-                <ButtonPrimary onClick={() => navigate('/report')}>Fazer denúncia</ButtonPrimary>
-                <ButtonOutline>Acompanhar denúncias</ButtonOutline>
+                <ButtonPrimary onClick={() => navigate('/create-report')}>Fazer denúncia</ButtonPrimary>
+                <ButtonOutline onClick={() => navigate('/reports-list-page')}>Acompanhar denúncias</ButtonOutline>
             </Actions>
             </Left>
 
