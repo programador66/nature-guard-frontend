@@ -20,11 +20,13 @@ import { useNavigate } from "react-router-dom";
 import MapPicker from "../../components/LocationInput";
 import { useState } from "react";
 import { useEffect } from "react";
+import SuccessModal from "../../components/ModalSuccess";
 
 export default function FormRepostDetails() {
     const navigate = useNavigate();
     const [position, setPosition] = useState(null);
     const [address, setAddress] = useState("");
+    const [openModal, setOpenModal] = useState(false);
 
     useEffect(() => {
         if (!position) return;
@@ -59,6 +61,7 @@ export default function FormRepostDetails() {
     };    
 
   return (
+    <>
     <Container>
       <Left>
         <img src={ReportMobileIcon} alt="Report" />
@@ -108,9 +111,22 @@ export default function FormRepostDetails() {
                     <BackButton onClick={() => navigate(-1)}>
                         Voltar
                     </BackButton>
-                    <Button onClick={() => navigate('/')}>Enviar denúncia</Button>
+                    <Button onClick={() => setOpenModal(true)} >Enviar denúncia</Button>
         </ButtonContainer>
       </Right>
     </Container>
+    
+      <SuccessModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onNew={() => {
+          setOpenModal(false);
+          // reset form ou navigate
+        }}
+        onTrack={() => {
+          // navigate("/tracking")
+        }}
+      />
+    </>
   );
 }
