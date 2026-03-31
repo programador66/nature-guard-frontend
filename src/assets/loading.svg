@@ -1,0 +1,57 @@
+<svg width="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- CÍRCULO LOADING -->
+  <circle
+    cx="60"
+    cy="60"
+    r="50"
+    stroke="#f26522"
+    stroke-width="4"
+    fill="none"
+    stroke-linecap="round"
+    stroke-dasharray="200"
+    stroke-dashoffset="150"
+  >
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      from="0 60 60"
+      to="360 60 60"
+      dur="1.2s"
+      repeatCount="indefinite"
+    />
+  </circle>
+
+  <!-- PIN SENDO DESENHADO -->
+  <path
+    d="M60 10C40 10 25 30 25 50c0 25 35 70 35 70s35-45 35-70C95 30 80 10 60 10z"
+    stroke="#f26522"
+    stroke-width="3"
+    fill="none"
+    stroke-dasharray="300"
+    stroke-dashoffset="300"
+  >
+    <animate
+      attributeName="stroke-dashoffset"
+      from="300"
+      to="0"
+      dur="1.5s"
+      repeatCount="indefinite"
+    />
+  </path>
+
+  <!-- FOLHA CRESCENDO -->
+  <path
+    d="M60 45 C50 60, 50 75, 60 80 C70 75, 70 60, 60 45"
+    fill="#2E7D32"
+    opacity="0"
+  >
+    <animate
+      attributeName="opacity"
+      values="0;1;1;0"
+      dur="1.5s"
+      repeatCount="indefinite"
+    />
+  </path>
+
+</svg>

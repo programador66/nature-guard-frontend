@@ -1,0 +1,22 @@
+<svg width="220" height="60" viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pin -->
+  <g transform="translate(0,5)">
+    <path d="M25 0C13 0 5 10 5 20c0 12 20 30 20 30s20-18 20-30C45 10 37 0 25 0z" fill="#F26522"/>
+    
+    <!-- Terra -->
+    <path d="M10 22c5-6 20-6 25 0 3 3-2 10-10 12-8-2-13-9-10-12z" fill="#2E7D32"/>
+    
+    <!-- Folha -->
+    <path d="M25 12c-5 5-5 15 0 18 5-3 5-13 0-18z" fill="#ffffff"/>
+    <path d="M25 20c-2 2-2 6 0 8" stroke="#2E7D32" stroke-width="1.5" fill="none"/>
+  </g>
+
+  <!-- Texto -->
+  <text x="60" y="28" font-size="20" font-weight="700" fill="#1d2340" font-family="Arial, sans-serif">
+    Disk Denúncias
+  </text>
+
+  <text x="60" y="48" font-size="18" font-weight="600" fill="#F26522" font-family="Arial, sans-serif">
+    Ambientais
+  </text>
+</svg>
