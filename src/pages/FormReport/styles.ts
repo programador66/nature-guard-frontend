@@ -1,72 +1,134 @@
 import styled from "styled-components";
 
+interface CardProps {
+  active?: boolean;
+}
+
 export const Container = styled.div`
-  height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 100vh;
+  background: #f5f5f5;
 `;
 
-export const Card = styled.div`
-  background: white;
-  padding: 32px;
-  width: 400px;
-  border-radius: 12px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+export const Left = styled.div`
+  flex: 1;
+  background-size: cover;
+  padding-left: 10%;
+`;
+
+export const Right = styled.div`
+  flex: 1;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const Step = styled.span`
+  font-size: 14px;
+  color: #888;
 `;
 
 export const Title = styled.h1`
-  margin-bottom: 8px;
+  margin: 10px 0;
 `;
 
 export const Subtitle = styled.p`
-  font-size: 14px;
   color: #666;
   margin-bottom: 20px;
 `;
 
 export const Label = styled.label`
+  margin-top: 15px;
   font-size: 14px;
-  margin-top: 12px;
-  display: block;
 `;
 
 export const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
+  padding: 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
-`;
-
-export const Select = styled.select`
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  border: none;
+  background: #eee;
+  margin-top: 5px;
 `;
 
 export const TextArea = styled.textarea`
-  width: 100%;
-  height: 100px;
-  padding: 10px;
-  margin-top: 6px;
+  padding: 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: none;
+  background: #eee;
+  margin-top: 5px;
+  height: 100px;
+`;
+
+export const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+`;
+
+export const Card = styled.div<CardProps>`
+  padding: 20px;
+  border-radius: 10px;
+  background: ${({ active }) => (active ? "#ffe5d6" : "#eee")};
+  border: 2px solid ${({ active }) => (active ? "#f26522" : "transparent")};
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  cursor: pointer;
+  transition: 0.2s;
+
+  svg {
+    color: ${({ active }) => (active ? "#f26522" : "#555")};
+  }
+
+  &:hover {
+    transform: scale(1.02);
+  }
 `;
 
 export const Button = styled.button`
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
+  flex: 1;
+  padding: 15px 20px;
   border: none;
-  border-radius: 8px;
-  background: #2e7d32;
+  border-radius: 10px;
+  background: #f26522;
   color: white;
   font-weight: bold;
   cursor: pointer;
 
   &:hover {
-    background: #1b5e20;
-  }`;
+    background: #d9541b;
+  }
+`;
+
+export const HeaderTop = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+
+export const BackButton = styled.button`
+  flex: 1;
+  padding: 15px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #eaeaea;
+  color: #333;
+  cursor: pointer;
+
+  &:hover {
+    background: #ddd;
+  }
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 12px; /* 👈 espaço entre botões (mais elegante) */
+  margin-top: 30px; /* 👈 move o margin pra cá */
+`;
