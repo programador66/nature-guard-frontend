@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import FloodIcon from "@mui/icons-material/Flood";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import CloseIcon from "@mui/icons-material/Close";
 
 import {
   Container,
@@ -43,21 +44,42 @@ type ReportType = "fire" | "flood" | "landslide" | "noise";
 export default function EditReportPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const passedReport = (location.state as { report?: Report })?.report;
+
+  const [isLoading, setIsLoading] = useState(!passedReport);
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [selected, setSelected] = useState<ReportType[]>([]);
-  const [address, setAddress] = useState("");
-  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [title, setTitle] = useState(passedReport?.title ?? "");
+  const [description, setDescription] = useState(passedReport?.description ?? "");
+  const [selected, setSelected] = useState<ReportType[]>(
+    passedReport
+      ? (passedReport.tags ?? []).map((t) => TAG_TO_TYPE[t] as ReportType).filter(Boolean)
+      : []
+  );
+  const [address, setAddress] = useState(passedReport?.address ?? "");
+  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
+    passedReport?.lat && passedReport?.lng
+      ? { lat: passedReport.lat, lng: passedReport.lng }
+      : null
+  );
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    setImageFiles((prev) => [...prev, ...files].slice(0, 3));
+    e.target.value = "";
+  };
+
+  const removeFile = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   useEffect(() => {
-    if (!id) return;
+    if (passedReport || !id) return;
 
     getReport(Number(id))
       .then(({ data }: { data: Report }) => {
@@ -73,7 +95,7 @@ export default function EditReportPage() {
       })
       .catch((err) => console.error("Erro ao carregar denúncia:", err))
       .finally(() => setIsLoading(false));
-  }, [id]);
+  }, [id, passedReport]);
 
   useEffect(() => {
     if (!position) return;
@@ -113,7 +135,7 @@ export default function EditReportPage() {
           address,
           lat: position?.lat ?? null,
           lng: position?.lng ?? null,
-        }, imageFile ?? undefined),
+        }, imageFiles.length > 0 ? imageFiles : undefined),
         new Promise((resolve) => setTimeout(resolve, 3000)), // TODO: remover em prod
       ]);
       setShowSuccess(true);
@@ -187,29 +209,38 @@ export default function EditReportPage() {
             </MapWrapper>
           </LocationBox>
 
-          <Label>Substituir imagem (Opcional)</Label>
+          <Label>Substituir imagens (Opcional — até 3)</Label>
           <UploadBox>
             <p>⬆️</p>
-            <strong>Escolha um arquivo do computador</strong>
-            <span>JPEG, PNG até 1MB</span>
+            <strong>Escolha arquivos do computador</strong>
+            <span>JPEG, PNG até 1MB cada</span>
             <input
               ref={fileInputRef}
               type="file"
               accept="image/jpeg,image/png"
+              multiple
               style={{ display: "none" }}
-              onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+              onChange={handleFileChange}
             />
-            <UploadButton type="button" onClick={() => fileInputRef.current?.click()}>
-              Escolher arquivo
+            <UploadButton
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={imageFiles.length >= 3}
+            >
+              {imageFiles.length >= 3 ? "Limite atingido" : "Escolher arquivo"}
             </UploadButton>
           </UploadBox>
 
-          {imageFile && (
-            <SelectedFile>
+          {imageFiles.map((file, i) => (
+            <SelectedFile key={i}>
               <AttachFileIcon />
-              {imageFile.name}
+              {file.name}
+              <CloseIcon
+                style={{ marginLeft: "auto", cursor: "pointer", fontSize: 16 }}
+                onClick={() => removeFile(i)}
+              />
             </SelectedFile>
-          )}
+          ))}
 
           <ButtonContainer>
             <BackButton onClick={() => navigate(-1)}>Cancelar</BackButton>

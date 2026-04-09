@@ -24,7 +24,7 @@ function MainPage() {
     return (
         <Container>
             <Header>
-                <Logo />
+                <Logo dark />
                 <Nav>
                     <ButtonOutline onClick={() => navigate('/register')}>Criar conta</ButtonOutline>
                     <ButtonPrimary onClick={() => navigate('/login')}>Entrar</ButtonPrimary>

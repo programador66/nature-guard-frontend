@@ -22,6 +22,13 @@ export const FilterBar = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 `;
 
+export const FilterRow = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
 export const SearchWrapper = styled.div`
   flex: 1;
   min-width: 200px;
@@ -91,6 +98,7 @@ export const SearchButton = styled.button`
   cursor: pointer;
   transition: background 0.15s;
   white-space: nowrap;
+  margin-left: auto;
 
   svg {
     font-size: 18px;
@@ -107,6 +115,28 @@ export const OrderSelect = styled(FilterSelect)`
   @media (max-width: 768px) {
     margin-left: 0;
     width: 100%;
+  }
+`;
+
+export const DateInput = styled.input`
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #e8e8e8;
+  background: #fafafa;
+  font-size: 14px;
+  color: #555;
+  outline: none;
+  transition: border-color 0.15s;
+  cursor: pointer;
+
+  &:focus {
+    border-color: #f26522;
+    background: #fff;
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(45%) sepia(80%) saturate(1500%) hue-rotate(350deg) brightness(95%);
   }
 `;
 

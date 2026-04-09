@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
 
 import {
@@ -15,16 +13,15 @@ import {
   EditButton,
 } from "./styles";
 
-import type { RootState } from "../../store";
 import type { Report } from "../../types/report";
 import ReportDetailModal from "../ReportDetailModal";
 
-export default function ReportCard(props: Report) {
-  const { title, userName, tags, description, id } = props;
-  const navigate = useNavigate();
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
+interface ReportCardProps extends Report {
+  onEdit?: () => void;
+}
+
+export default function ReportCard(props: ReportCardProps) {
+  const { title, userName, tags, description, onEdit } = props;
   const [showDetail, setShowDetail] = useState(false);
 
   return (
@@ -43,8 +40,8 @@ export default function ReportCard(props: Report) {
 
         <CardActions>
           <Button onClick={() => setShowDetail(true)}>Detalhes</Button>
-          {isAuthenticated && id && (
-            <EditButton onClick={() => navigate(`/edit-report/${id}`)}>
+          {onEdit && (
+            <EditButton onClick={onEdit}>
               <EditIcon />
               Editar
             </EditButton>

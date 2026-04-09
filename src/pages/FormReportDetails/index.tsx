@@ -19,6 +19,7 @@ import {
 } from "./styles";
 
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import CloseIcon from "@mui/icons-material/Close";
 import ReportMobileIcon from "../../assets/denuncia-mobile-02.svg";
 import { useNavigate } from "react-router-dom";
 import MapPicker from "../../components/LocationInput";
@@ -44,7 +45,7 @@ export default function FormRepostDetails() {
     lng: number;
   } | null>(null);
   const [address, setAddress] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -75,8 +76,16 @@ export default function FormRepostDetails() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    setImageFile(file);
+    const files = Array.from(e.target.files ?? []);
+    setImageFiles((prev) => {
+      const combined = [...prev, ...files];
+      return combined.slice(0, 3);
+    });
+    e.target.value = "";
+  };
+
+  const removeFile = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async () => {
@@ -98,7 +107,7 @@ export default function FormRepostDetails() {
     setIsLoading(true);
     try {
       await Promise.all([
-        createReport({ ...draft, ...step2 }, imageFile ?? undefined),
+        createReport({ ...draft, ...step2 }, imageFiles.length > 0 ? imageFiles : undefined),
         new Promise((resolve) => setTimeout(resolve, 3000)), // TODO: remover em prod
       ]);
       dispatch(clearDraft());
@@ -149,32 +158,41 @@ export default function FormRepostDetails() {
           </LocationBox>
 
           {/* UPLOAD */}
-          <Label>Insira uma foto para ajudar a denúncia (Opcional)</Label>
+          <Label>Insira fotos para ajudar a denúncia (Opcional — até 3)</Label>
 
           <UploadBox>
             <p>⬆️</p>
-            <strong>Escolha um arquivo do computador</strong>
-            <span>JPEG, PNG até 1MB</span>
+            <strong>Escolha arquivos do computador</strong>
+            <span>JPEG, PNG até 1MB cada</span>
 
             <input
               ref={fileInputRef}
               type="file"
               accept="image/jpeg,image/png"
+              multiple
               style={{ display: "none" }}
               onChange={handleFileChange}
             />
 
-            <UploadButton type="button" onClick={() => fileInputRef.current?.click()}>
-              Escolher arquivo
+            <UploadButton
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={imageFiles.length >= 3}
+            >
+              {imageFiles.length >= 3 ? "Limite atingido" : "Escolher arquivo"}
             </UploadButton>
           </UploadBox>
 
-          {imageFile && (
-            <SelectedFile>
+          {imageFiles.map((file, i) => (
+            <SelectedFile key={i}>
               <AttachFileIcon />
-              {imageFile.name}
+              {file.name}
+              <CloseIcon
+                style={{ marginLeft: "auto", cursor: "pointer", fontSize: 16 }}
+                onClick={() => removeFile(i)}
+              />
             </SelectedFile>
-          )}
+          ))}
 
           <ButtonContainer>
             <BackButton onClick={() => navigate(-1)}>Voltar</BackButton>

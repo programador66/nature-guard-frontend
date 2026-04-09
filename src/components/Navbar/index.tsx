@@ -57,13 +57,24 @@ export default function Navbar() {
         )}
 
         {isAuthenticated && (
-          <NavLink
-            className={location.pathname === "/my-reports" ? "active" : ""}
-            onClick={() => navigate("/my-reports")}
-          >
-            <BookmarkBorderIcon fontSize="small" />
-            Minhas Denúncias
-          </NavLink>
+          <>
+            {location.pathname === "/my-reports" && (
+              <NavLink
+                onClick={() => navigate("/reports-list-page")}
+              >
+                <FormatListBulletedIcon fontSize="small" />
+                Denúncias
+              </NavLink>
+            )}
+
+            <NavLink
+              className={location.pathname === "/my-reports" ? "active" : ""}
+              onClick={() => navigate("/my-reports")}
+            >
+              <BookmarkBorderIcon fontSize="small" />
+              Minhas Denúncias
+            </NavLink>
+          </>
         )}
 
         <NavLink

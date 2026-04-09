@@ -32,13 +32,13 @@ export default function MyReportsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user) return;
 
-    getUserReports(user.id)
+    getUserReports()
       .then(({ data }) => setReports(data))
       .catch((err) => console.error("Erro ao buscar denúncias:", err))
       .finally(() => setIsLoading(false));
-  }, [user?.id]);
+  }, [user]);
 
   return (
     <>
@@ -96,7 +96,7 @@ export default function MyReportsPage() {
               <ReportCard
                 key={index}
                 {...item}
-                onEdit={() => navigate(`/edit-report/${item.id}`)}
+                onEdit={() => navigate(`/edit-report/${item.id}`, { state: { report: item } })}
               />
             ))}
           </Grid>

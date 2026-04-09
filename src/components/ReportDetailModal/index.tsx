@@ -4,7 +4,6 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ImageIcon from "@mui/icons-material/Image";
 import MapIcon from "@mui/icons-material/Map";
-import PhotoIcon from "@mui/icons-material/Photo";
 
 import type { Report } from "../../types/report";
 
@@ -14,7 +13,6 @@ import {
   ImageSection,
   CarouselImage,
   NoImage,
-  ImageBadge,
   CloseButton,
   CarouselArrow,
   Dots,

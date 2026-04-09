@@ -12,11 +12,13 @@ export const NavbarWrapper = styled.nav`
   position: sticky;
   top: 0;
   z-index: 100;
+  box-sizing: border-box;
 `;
 
 export const NavLeft = styled.div`
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 `;
 
 export const NavCenter = styled.div`

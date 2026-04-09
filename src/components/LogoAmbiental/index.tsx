@@ -1,8 +1,13 @@
 
 import { Container } from "./styles"
 
-import denuncia from '../../assets/logo-ambiental.svg';
+import logoLight from '../../assets/logo-ambiental.svg';
+import logoDark from '../../assets/logo-ambiental-dark.svg';
 
-export default function Logo() {
-  return (<Container src={denuncia} />)
+interface LogoProps {
+  dark?: boolean;
+}
+
+export default function Logo({ dark }: LogoProps) {
+  return (<Container src={dark ? logoDark : logoLight} />)
 }

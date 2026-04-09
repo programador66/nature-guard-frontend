@@ -37,7 +37,8 @@ export default function FormReport() {
   const draft = useSelector((state: RootState) => state.report.draft);
 
   const [title, setTitle] = useState(draft?.title ?? "");
-  const [name, setName] = useState(draft?.name ?? user?.name ?? "");
+  const [name, setName] = useState(draft?.name ?? "");
+  const displayName = user?.name ?? name;
   const [description, setDescription] = useState(draft?.description ?? "");
   const [selected, setSelected] = useState<ReportType[]>(
     (draft?.types as ReportType[]) ?? []
@@ -50,7 +51,7 @@ export default function FormReport() {
   };
 
   const handleContinue = () => {
-    dispatch(saveStep1({ title, name, description, types: selected }));
+    dispatch(saveStep1({ title, name: displayName, description, types: selected }));
     navigate("/create-report-details");
   };
 
@@ -81,8 +82,10 @@ export default function FormReport() {
         <Label>Nome completo</Label>
         <Input
           placeholder="Digite seu nome"
-          value={name}
+          value={displayName}
           onChange={(e) => setName(e.target.value)}
+          readOnly={!!user}
+          style={user ? { opacity: 0.7, cursor: "not-allowed" } : undefined}
         />
 
         <Label>Descrição do ocorrido</Label>

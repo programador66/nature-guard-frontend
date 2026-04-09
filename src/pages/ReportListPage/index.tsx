@@ -7,30 +7,85 @@ import {
   SearchWrapper,
   SearchInput,
   FilterSelect,
+  DateInput,
   SearchButton,
-  OrderSelect,
   Breadcrumb,
   Grid,
   EmptyState,
 } from "./styles";
 
 import ReportCard from "../../components/ReportCard";
+import Pagination from "../../components/Pagination";
 import Navbar from "../../components/Navbar";
 import Loader from "../../components/Loader";
 import { getReports } from "../../service/reportService";
-import type { Report } from "../../types/report";
+import type { Report, Page } from "../../types/report";
 import emptyIllustration from "../../assets/denuncia-mobile-02.svg";
+
+const PAGE_SIZE = 9;
 
 export default function ReportListPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // filter state
+  const [searchText, setSearchText] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  // applied filters (only sent to API after clicking "Buscar")
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [appliedTag, setAppliedTag] = useState("");
+  const [appliedStart, setAppliedStart] = useState("");
+  const [appliedEnd, setAppliedEnd] = useState("");
 
   useEffect(() => {
-    getReports()
-      .then(({ data }) => setReports(data))
-      .catch((err) => console.error("Erro ao buscar denúncias:", err))
-      .finally(() => setIsLoading(false));
-  }, []);
+    let cancelled = false;
+
+    const tags = appliedTag ? [appliedTag] : undefined;
+    const startISO = appliedStart ? `${appliedStart}T00:00:00` : undefined;
+    const endISO = appliedEnd ? `${appliedEnd}T23:59:59` : undefined;
+
+    getReports({
+      page: currentPage,
+      size: PAGE_SIZE,
+      search: appliedSearch || undefined,
+      tags,
+      startDate: startISO,
+      endDate: endISO,
+    })
+      .then(({ data }: { data: Page<Report> }) => {
+        if (cancelled) return;
+        setReports(data.content);
+        setTotalPages(data.totalPages);
+      })
+      .catch((err) => {
+        if (!cancelled) console.error("Erro ao buscar denúncias:", err);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [currentPage, appliedSearch, appliedTag, appliedStart, appliedEnd]);
+
+  const handleSearch = () => {
+    setAppliedSearch(searchText);
+    setAppliedTag(selectedTag);
+    setAppliedStart(startDate);
+    setAppliedEnd(endDate);
+    setCurrentPage(0);
+    setIsLoading(true);
+  };
+
+  const handlePageChange = (page: number) => {
+    setIsLoading(true);
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
@@ -41,10 +96,18 @@ export default function ReportListPage() {
         <FilterBar>
           <SearchWrapper>
             <SearchIcon />
-            <SearchInput placeholder="Buscar por cidade ou usuário" />
+            <SearchInput
+              placeholder="Buscar por usuário ou descrição"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
+            />
           </SearchWrapper>
 
-          <FilterSelect>
+          <FilterSelect
+            value={selectedTag}
+            onChange={(e) => setSelectedTag(e.target.value)}
+          >
             <option value="">Tipo de ocorrido</option>
             <option value="QUEIMADA">Queimada</option>
             <option value="ALAGAMENTO">Alagamento</option>
@@ -52,15 +115,24 @@ export default function ReportListPage() {
             <option value="POLUICAO_SONORA">Poluição Sonora</option>
           </FilterSelect>
 
-          <SearchButton>
+          <DateInput
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            title="Data início"
+          />
+
+          <DateInput
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            title="Data fim"
+          />
+
+          <SearchButton onClick={handleSearch}>
             <SearchIcon />
             Buscar
           </SearchButton>
-
-          <OrderSelect>
-            <option value="recent">Mais recente</option>
-            <option value="oldest">Mais antigo</option>
-          </OrderSelect>
         </FilterBar>
 
         <Breadcrumb>
@@ -77,11 +149,21 @@ export default function ReportListPage() {
             </p>
           </EmptyState>
         ) : (
-          <Grid>
-            {reports.map((item, index) => (
-              <ReportCard key={index} {...item} />
-            ))}
-          </Grid>
+          <>
+            <Grid>
+              {reports.map((item, index) => (
+                <ReportCard key={index} {...item} />
+              ))}
+            </Grid>
+
+            {!isLoading && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
         )}
       </Container>
     </>

@@ -26,7 +26,7 @@ export interface ReportPayload {
   lng: number | null;
 }
 
-function buildFormData(data: ReportPayload, imageFile?: File): FormData {
+function buildFormData(data: ReportPayload, imageFiles?: File[]): FormData {
   const formData = new FormData();
 
   const reportData = {
@@ -40,30 +40,56 @@ function buildFormData(data: ReportPayload, imageFile?: File): FormData {
 
   formData.append("data", JSON.stringify(reportData));
 
-  if (imageFile) {
-    formData.append("images", imageFile);
+  if (imageFiles) {
+    imageFiles.forEach((file) => formData.append("images", file));
   }
 
   return formData;
 }
 
-export const createReport = (data: ReportPayload, imageFile?: File) =>
-  api.post("/reports", buildFormData(data, imageFile), {
+export const createReport = (data: ReportPayload, imageFiles?: File[]) =>
+  api.post("/reports", buildFormData(data, imageFiles), {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
 export const updateReport = (
   id: number,
   data: ReportPayload,
-  imageFile?: File
+  imageFiles?: File[]
 ) =>
-  api.put(`/reports/${id}`, buildFormData(data, imageFile), {
+  api.put(`/reports/${id}`, buildFormData(data, imageFiles), {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
 export const getReport = (id: number) => api.get(`/reports/${id}`);
 
-export const getReports = () => api.get("/reports");
+export interface ReportFilters {
+  page?: number;
+  size?: number;
+  sort?: string;
+  search?: string;
+  tags?: string[];
+  startDate?: string;
+  endDate?: string;
+}
 
-export const getUserReports = (userId: string) =>
-  api.get(`/reports/my-reports/${userId}`);
+export const getReports = (filters: ReportFilters = {}) => {
+  const { page = 0, size = 9, sort = "createdAt,desc", search, tags, startDate, endDate } = filters;
+
+  const params = new URLSearchParams();
+  params.append("page", String(page));
+  params.append("size", String(size));
+  params.append("sort", sort);
+
+  if (search) params.append("search", search);
+  if (tags && tags.length > 0) {
+    tags.forEach((tag) => params.append("tags", tag));
+  }
+  if (startDate) params.append("startDate", startDate);
+  if (endDate) params.append("endDate", endDate);
+
+  return api.get(`/reports?${params.toString()}`);
+};
+
+export const getUserReports = () =>
+  api.get("/reports/my-reports");

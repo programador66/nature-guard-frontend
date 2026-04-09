@@ -61,10 +61,8 @@ export default function LoginPage() {
         if (pendingSubmit && pendingDraft) {
           await createReport(pendingDraft);
           dispatch(clearDraft());
-          navigate("/reports-list-page");
-        } else {
-          navigate("/");
         }
+        navigate("/reports-list-page");
       } catch (err: unknown) {
         console.error("Erro no login:", err);
         const message =
@@ -91,9 +89,9 @@ export default function LoginPage() {
           <Form as="form" onSubmit={formik.handleSubmit}>
             <Title>Bem vindo de volta 👋</Title>
             <Subtitle>
-              Today is a new day. It's your day. You shape it.
+              Sua voz faz a diferença na proteção do meio ambiente.
               <br />
-              Sign in to start managing your projects.
+              Entre na sua conta e continue denunciando.
             </Subtitle>
 
             <FieldGroup>

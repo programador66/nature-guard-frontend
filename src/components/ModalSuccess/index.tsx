@@ -9,9 +9,15 @@ import {
   SecondaryButton,
 } from "./styles";
 
-import SuccessImage from "../../assets/success-01.svg"; // sua imagem
+import SuccessImage from "../../assets/success-01.svg";
+interface SuccessModalProps {
+  open: boolean;
+  onClose?: () => void;
+  onNew: () => void;
+  onTrack: () => void;
+}
 
-export default function SuccessModal({ open, onClose, onNew, onTrack }) {
+export default function SuccessModal({ open, onNew, onTrack }: SuccessModalProps) {
   if (!open) return null;
 
   return (
