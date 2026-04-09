@@ -2,14 +2,25 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   background: #f5f5f5;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const Left = styled.div`
   flex: 1;
   background-size: cover;
   padding-left: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export const Right = styled.div`
@@ -17,6 +28,10 @@ export const Right = styled.div`
   padding: 60px;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    padding: 32px 20px;
+  }
 `;
 
 export const Step = styled.span`
@@ -132,4 +147,39 @@ export const MapWrapper = styled.div`
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #ddd;
+`;
+
+export const LocationInput = styled.input`
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #eee;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: 1.5px solid #f26522;
+    background: #fff;
+  }
+`;
+
+export const SelectedFile = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fff3ec;
+  border: 1px solid #f26522;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #f26522;
+  font-weight: 500;
+
+  svg {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
 `;

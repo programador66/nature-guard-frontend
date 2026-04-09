@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import SearchIcon from "@mui/icons-material/Search";
 
 import {
@@ -12,25 +14,31 @@ import {
   Breadcrumb,
   Grid,
   EmptyState,
-} from "./styles";
+} from "../ReportListPage/styles";
 
 import ReportCard from "../../components/ReportCard";
 import Navbar from "../../components/Navbar";
 import Loader from "../../components/Loader";
-import { getReports } from "../../service/reportService";
+import { getUserReports } from "../../service/reportService";
+import type { RootState } from "../../store";
 import type { Report } from "../../types/report";
 import emptyIllustration from "../../assets/denuncia-mobile-02.svg";
 
-export default function ReportListPage() {
+export default function MyReportsPage() {
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getReports()
+    if (!user?.id) return;
+
+    getUserReports(user.id)
       .then(({ data }) => setReports(data))
       .catch((err) => console.error("Erro ao buscar denúncias:", err))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [user?.id]);
 
   return (
     <>
@@ -41,7 +49,7 @@ export default function ReportListPage() {
         <FilterBar>
           <SearchWrapper>
             <SearchIcon />
-            <SearchInput placeholder="Buscar por cidade ou usuário" />
+            <SearchInput placeholder="Buscar por título ou descrição" />
           </SearchWrapper>
 
           <FilterSelect>
@@ -64,22 +72,32 @@ export default function ReportListPage() {
         </FilterBar>
 
         <Breadcrumb>
-          Início / <span>Acompanhar denúncias</span>
+          Início / <span>Minhas denúncias</span>
         </Breadcrumb>
 
         {!isLoading && reports.length === 0 ? (
           <EmptyState>
             <img src={emptyIllustration} alt="Nenhuma denúncia" />
-            <h3>Nenhuma denúncia encontrada</h3>
+            <h3>Você ainda não fez nenhuma denúncia</h3>
             <p>
-              Ainda não há denúncias registradas. Seja o primeiro a contribuir
-              para a proteção do meio ambiente!
+              Contribua com a proteção do meio ambiente. Registre sua primeira
+              denúncia e acompanhe o andamento por aqui.
             </p>
+            <SearchButton
+              style={{ marginTop: 8 }}
+              onClick={() => navigate("/create-report")}
+            >
+              Fazer primeira denúncia
+            </SearchButton>
           </EmptyState>
         ) : (
           <Grid>
             {reports.map((item, index) => (
-              <ReportCard key={index} {...item} />
+              <ReportCard
+                key={index}
+                {...item}
+                onEdit={() => navigate(`/edit-report/${item.id}`)}
+              />
             ))}
           </Grid>
         )}

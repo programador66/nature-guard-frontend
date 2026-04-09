@@ -6,14 +6,25 @@ interface CardProps {
 
 export const Container = styled.div`
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   background: #f5f5f5;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const Left = styled.div`
   flex: 1;
   background-size: cover;
   padding-left: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export const Right = styled.div`
@@ -21,6 +32,10 @@ export const Right = styled.div`
   padding: 60px;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    padding: 32px 20px;
+  }
 `;
 
 export const Step = styled.span`
@@ -66,6 +81,10 @@ export const Grid = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   margin-top: 15px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const Card = styled.div<CardProps>`
