@@ -1,4 +1,5 @@
 import { useState } from "react";
+import * as yup from "yup";
 import {
   Container,
   Left,
@@ -15,6 +16,7 @@ import {
   HeaderTop,
   BackButton,
   ButtonContainer,
+  ErrorText,
 } from "./styles";
 
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
@@ -30,6 +32,20 @@ import { saveStep1 } from "../../store/slices/reportSlice";
 
 type ReportType = "fire" | "flood" | "landslide" | "noise";
 
+const step1Schema = yup.object({
+  title: yup.string().trim().required("Título é obrigatório"),
+  name: yup.string().trim().required("Nome completo é obrigatório"),
+  description: yup
+    .string()
+    .trim()
+    .required("Descrição é obrigatória")
+    .min(10, "Descrição deve ter pelo menos 10 caracteres"),
+  types: yup
+    .array()
+    .of(yup.string().required())
+    .min(1, "Selecione pelo menos um tipo de ocorrido"),
+});
+
 export default function FormReport() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -43,6 +59,7 @@ export default function FormReport() {
   const [selected, setSelected] = useState<ReportType[]>(
     (draft?.types as ReportType[]) ?? []
   );
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const toggleSelect = (type: ReportType) => {
     setSelected((prev) =>
@@ -50,9 +67,26 @@ export default function FormReport() {
     );
   };
 
-  const handleContinue = () => {
-    dispatch(saveStep1({ title, name: displayName, description, types: selected }));
-    navigate("/create-report-details");
+  const handleContinue = async () => {
+    try {
+      await step1Schema.validate(
+        { title, name: displayName, description, types: selected },
+        { abortEarly: false }
+      );
+      setErrors({});
+      dispatch(saveStep1({ title, name: displayName, description, types: selected }));
+      navigate("/create-report-details");
+    } catch (err) {
+      if (err instanceof yup.ValidationError) {
+        const fieldErrors: Record<string, string> = {};
+        err.inner.forEach((e) => {
+          if (e.path && !fieldErrors[e.path]) {
+            fieldErrors[e.path] = e.message;
+          }
+        });
+        setErrors(fieldErrors);
+      }
+    }
   };
 
   return (
@@ -78,6 +112,7 @@ export default function FormReport() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+        {errors.title && <ErrorText>{errors.title}</ErrorText>}
 
         <Label>Nome completo</Label>
         <Input
@@ -87,6 +122,7 @@ export default function FormReport() {
           readOnly={!!user}
           style={user ? { opacity: 0.7, cursor: "not-allowed" } : undefined}
         />
+        {errors.name && <ErrorText>{errors.name}</ErrorText>}
 
         <Label>Descrição do ocorrido</Label>
         <TextArea
@@ -94,6 +130,7 @@ export default function FormReport() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+        {errors.description && <ErrorText>{errors.description}</ErrorText>}
 
         <Label>Tipo de ocorrido</Label>
 
@@ -130,6 +167,7 @@ export default function FormReport() {
             Poluição Sonora
           </Card>
         </Grid>
+        {errors.types && <ErrorText>{errors.types}</ErrorText>}
 
         <ButtonContainer>
           <BackButton onClick={() => navigate(-1)}>Cancelar</BackButton>

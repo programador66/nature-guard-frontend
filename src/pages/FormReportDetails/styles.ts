@@ -183,3 +183,9 @@ export const SelectedFile = styled.div`
     flex-shrink: 0;
   }
 `;
+
+export const ErrorText = styled.span`
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 4px;
+`;

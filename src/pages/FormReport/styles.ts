@@ -153,3 +153,9 @@ export const ButtonContainer = styled.div`
   gap: 12px;
   margin-top: 30px;
 `;
+
+export const ErrorText = styled.span`
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 4px;
+`;

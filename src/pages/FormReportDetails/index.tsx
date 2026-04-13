@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import * as yup from "yup";
 import {
   Container,
   Left,
@@ -16,6 +17,7 @@ import {
   MapWrapper,
   LocationInput,
   SelectedFile,
+  ErrorText,
 } from "./styles";
 
 import AttachFileIcon from "@mui/icons-material/AttachFile";
@@ -29,6 +31,18 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store";
 import { saveStep2, clearDraft } from "../../store/slices/reportSlice";
 import { createReport } from "../../service/reportService";
+
+const step2Schema = yup.object({
+  address: yup.string().trim().required("Endereço é obrigatório"),
+  lat: yup
+    .number()
+    .nullable()
+    .required("Selecione um local no mapa ou pesquise um endereço"),
+  lng: yup
+    .number()
+    .nullable()
+    .required("Selecione um local no mapa ou pesquise um endereço"),
+});
 
 export default function FormRepostDetails() {
   const navigate = useNavigate();
@@ -48,6 +62,7 @@ export default function FormRepostDetails() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!position) return;
@@ -95,6 +110,22 @@ export default function FormRepostDetails() {
       lng: position?.lng ?? null,
     };
 
+    try {
+      await step2Schema.validate(step2, { abortEarly: false });
+      setErrors({});
+    } catch (err) {
+      if (err instanceof yup.ValidationError) {
+        const fieldErrors: Record<string, string> = {};
+        err.inner.forEach((e) => {
+          if (e.path && !fieldErrors[e.path]) {
+            fieldErrors[e.path] = e.message;
+          }
+        });
+        setErrors(fieldErrors);
+      }
+      return;
+    }
+
     dispatch(saveStep2(step2));
 
     if (!isAuthenticated) {
@@ -108,7 +139,7 @@ export default function FormRepostDetails() {
     try {
       await Promise.all([
         createReport({ ...draft, ...step2 }, imageFiles.length > 0 ? imageFiles : undefined),
-        new Promise((resolve) => setTimeout(resolve, 3000)), // TODO: remover em prod
+        new Promise((resolve) => setTimeout(resolve, 3000)),
       ]);
       dispatch(clearDraft());
       setOpenModal(true);
@@ -156,6 +187,11 @@ export default function FormRepostDetails() {
               <MapPicker position={position} setPosition={setPosition} />
             </MapWrapper>
           </LocationBox>
+          {(errors.address || errors.lat) && (
+            <ErrorText>
+              {errors.address || errors.lat}
+            </ErrorText>
+          )}
 
           {/* UPLOAD */}
           <Label>Insira fotos para ajudar a denúncia (Opcional — até 3)</Label>
