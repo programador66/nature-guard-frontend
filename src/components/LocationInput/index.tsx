@@ -1,8 +1,8 @@
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-
+import type { LatLngLiteral } from "leaflet";
 import L from "leaflet";
 
-delete L.Icon.Default.prototype._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png",
@@ -10,7 +10,12 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
 });
 
-function LocationMarker({ position, setPosition }) {
+interface MapPickerProps {
+  position: LatLngLiteral | null;
+  setPosition: (pos: LatLngLiteral) => void;
+}
+
+function LocationMarker({ position, setPosition }: MapPickerProps) {
   useMapEvents({
     click(e) {
       setPosition(e.latlng);
@@ -20,7 +25,7 @@ function LocationMarker({ position, setPosition }) {
   return position ? <Marker position={position} /> : null;
 }
 
-export default function MapPicker({ position, setPosition }) {
+export default function MapPicker({ position, setPosition }: MapPickerProps) {
   return (
     <MapContainer
       center={position || [-25.43, -49.27]}
