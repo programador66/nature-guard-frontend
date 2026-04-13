@@ -1,20 +1,18 @@
-
 import { LoaderContainer, Loading, LoadingImg } from './styles';
 import Load from '../../assets/loading.svg';
-import { useState } from 'react';
 
-export default function Loader() {
-  const [isLoading] = useState(false);
+interface LoaderProps {
+  isLoading?: boolean;
+}
+
+export default function Loader({ isLoading = false }: LoaderProps) {
+  if (!isLoading) return null;
 
   return (
-
-      isLoading && (
-        <LoaderContainer>
-          <Loading>
-            <LoadingImg src={Load} />
-          </Loading>
-        </LoaderContainer>
-      )
-  
+    <LoaderContainer>
+      <Loading>
+        <LoadingImg src={Load} />
+      </Loading>
+    </LoaderContainer>
   );
 }

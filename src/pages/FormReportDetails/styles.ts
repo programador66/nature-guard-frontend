@@ -1,9 +1,5 @@
 import styled from "styled-components";
 
-interface CardProps {
-  active?: boolean;
-}
-
 export const Container = styled.div`
   display: flex;
   min-height: 100vh;
@@ -59,78 +55,62 @@ export const Label = styled.label`
   padding-bottom: 5px;
 `;
 
+
+export const InputWrapper = styled.div`
+  position: relative;
+  margin-top: 8px;
+`;
+
 export const Input = styled.input`
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  background: #eee;
-  margin-top: 5px;
-`;
-
-export const TextArea = styled.textarea`
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  background: #eee;
-  margin-top: 5px;
-  height: 100px;
-`;
-
-export const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 15px;
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-export const Card = styled.div<CardProps>`
-  padding: 20px;
+  width: 100%;
+  padding: 14px;
   border-radius: 10px;
-  background: ${({ active }) => (active ? "#ffe5d6" : "#eee")};
-  border: 2px solid ${({ active }) => (active ? "#f26522" : "transparent")};
+  border: none;
+  background: #eee;
+`;
+
+export const SearchIcon = styled.div`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+`;
+
+export const UploadBox = styled.div`
+  margin-top: 15px;
+  padding: 30px;
+  border: 2px dashed #dcdcdc;
+  border-radius: 12px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
+  text-align: center;
+`;
+
+export const UploadButton = styled.button`
+  margin-top: 10px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  background: #eee;
   cursor: pointer;
-  transition: 0.2s;
-
-  svg {
-    color: ${({ active }) => (active ? "#f26522" : "#555")};
-  }
-
-  &:hover {
-    transform: scale(1.02);
-  }
 `;
 
 export const Button = styled.button`
   flex: 1;
-  padding: 15px 20px;
-  border: none;
+  padding: 16px;
+  width: 100%;
   border-radius: 10px;
+  border: none;
   background: #f26522;
   color: white;
   font-weight: bold;
   cursor: pointer;
-
-  &:hover {
-    background: #d9541b;
-  }
 `;
-
-export const HeaderTop = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
 
 export const BackButton = styled.button`
   flex: 1;
@@ -152,6 +132,56 @@ export const ButtonContainer = styled.div`
   width: 100%;
   gap: 12px;
   margin-top: 30px;
+`;
+
+export const LocationBox = styled.div`
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+export const MapWrapper = styled.div`
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+`;
+
+export const LocationInput = styled.input`
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #eee;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: 1.5px solid #f26522;
+    background: #fff;
+  }
+`;
+
+export const SelectedFile = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fff3ec;
+  border: 1px solid #f26522;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #f26522;
+  font-weight: 500;
+
+  svg {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
 `;
 
 export const ErrorText = styled.span`
