@@ -93,7 +93,7 @@ export default function EditReportPage() {
           setPosition({ lat: data.lat, lng: data.lng });
         }
       })
-      .catch((err) => console.error("Erro ao carregar denúncia:", err))
+      .catch(() => {})
       .finally(() => setIsLoading(false));
   }, [id, passedReport]);
 
@@ -126,8 +126,7 @@ export default function EditReportPage() {
     if (!id) return;
     setIsSaving(true);
     try {
-      await Promise.all([
-        updateReport(Number(id), {
+      await updateReport(Number(id), {
           title,
           name: "",
           description,
@@ -135,12 +134,10 @@ export default function EditReportPage() {
           address,
           lat: position?.lat ?? null,
           lng: position?.lng ?? null,
-        }, imageFiles.length > 0 ? imageFiles : undefined),
-        new Promise((resolve) => setTimeout(resolve, 3000)), // TODO: remover em prod
-      ]);
+        }, imageFiles.length > 0 ? imageFiles : undefined);
       setShowSuccess(true);
-    } catch (err) {
-      console.error("Erro ao atualizar denúncia:", err);
+    } catch {
+      // erro silencioso
     } finally {
       setIsSaving(false);
     }

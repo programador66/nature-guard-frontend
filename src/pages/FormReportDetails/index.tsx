@@ -137,14 +137,11 @@ export default function FormRepostDetails() {
 
     setIsLoading(true);
     try {
-      await Promise.all([
-        createReport({ ...draft, ...step2 }, imageFiles.length > 0 ? imageFiles : undefined),
-        new Promise((resolve) => setTimeout(resolve, 3000)),
-      ]);
+      await createReport({ ...draft, ...step2 }, imageFiles.length > 0 ? imageFiles : undefined);
       dispatch(clearDraft());
       setOpenModal(true);
-    } catch (err) {
-      console.error("Erro ao enviar denúncia:", err);
+    } catch {
+      // erro silencioso
     } finally {
       setIsLoading(false);
     }

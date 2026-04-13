@@ -62,8 +62,8 @@ export default function ReportListPage() {
         setReports(data.content);
         setTotalPages(data.totalPages);
       })
-      .catch((err) => {
-        if (!cancelled) console.error("Erro ao buscar denúncias:", err);
+      .catch(() => {
+        // erro silencioso
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);

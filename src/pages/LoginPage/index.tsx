@@ -64,7 +64,6 @@ export default function LoginPage() {
         }
         navigate("/reports-list-page");
       } catch (err: unknown) {
-        console.error("Erro no login:", err);
         const message =
           (err as { response?: { data?: { message?: string } } })?.response
             ?.data?.message ?? "E-mail ou senha incorretos.";

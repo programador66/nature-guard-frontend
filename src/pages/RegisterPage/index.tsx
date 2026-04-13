@@ -83,10 +83,7 @@ export default function RegisterPage() {
 
         if (pendingSubmit && pendingDraft) {
           setIsLoadingReport(true);
-          await Promise.all([
-            createReport(pendingDraft),
-            new Promise((resolve) => setTimeout(resolve, 3000)), // TODO: remover em prod
-          ]);
+          await createReport(pendingDraft);
           dispatch(clearDraft());
           setIsLoadingReport(false);
           setShowSuccessModal(true);
@@ -94,8 +91,6 @@ export default function RegisterPage() {
           navigate("/");
         }
       } catch (err: unknown) {
-        console.log("Erro completo:", err);
-        console.log("Response data:", (err as { response?: { data?: unknown } })?.response?.data);
         const message =
           (err as { response?: { data?: { message?: string } } })?.response
             ?.data?.message ?? "Erro ao criar conta. Tente novamente.";

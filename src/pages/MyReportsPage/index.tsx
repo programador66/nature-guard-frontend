@@ -36,7 +36,7 @@ export default function MyReportsPage() {
 
     getUserReports()
       .then(({ data }) => setReports(data))
-      .catch((err) => console.error("Erro ao buscar denúncias:", err))
+      .catch(() => {})
       .finally(() => setIsLoading(false));
   }, [user]);
 
