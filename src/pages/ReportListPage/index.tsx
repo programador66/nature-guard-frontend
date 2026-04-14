@@ -19,6 +19,7 @@ import Pagination from "../../components/Pagination";
 import Navbar from "../../components/Navbar";
 import Loader from "../../components/Loader";
 import { getReports } from "../../service/reportService";
+import { extractErrorMessage } from "../../service/api";
 import type { Report, Page } from "../../types/report";
 import emptyIllustration from "../../assets/denuncia-mobile-02.svg";
 
@@ -29,6 +30,7 @@ export default function ReportListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [apiError, setApiError] = useState("");
 
   // filter state
   const [searchText, setSearchText] = useState("");
@@ -61,9 +63,11 @@ export default function ReportListPage() {
         if (cancelled) return;
         setReports(data.content);
         setTotalPages(data.totalPages);
+        setApiError("");
       })
-      .catch(() => {
-        // erro silencioso
+      .catch((err) => {
+        if (cancelled) return;
+        setApiError(extractErrorMessage(err, "Erro ao carregar denúncias. Tente novamente."));
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -139,7 +143,22 @@ export default function ReportListPage() {
           Início / <span>Acompanhar denúncias</span>
         </Breadcrumb>
 
-        {!isLoading && reports.length === 0 ? (
+        {apiError && (
+          <div
+            style={{
+              background: "#FEE2E2",
+              color: "#B91C1C",
+              padding: "12px 16px",
+              borderRadius: 8,
+              marginBottom: 16,
+              fontSize: 14,
+            }}
+          >
+            {apiError}
+          </div>
+        )}
+
+        {!isLoading && !apiError && reports.length === 0 ? (
           <EmptyState>
             <img src={emptyIllustration} alt="Nenhuma denúncia" />
             <h3>Nenhuma denúncia encontrada</h3>

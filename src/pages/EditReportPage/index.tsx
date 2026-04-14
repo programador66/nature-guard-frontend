@@ -37,6 +37,7 @@ import Loader from "../../components/Loader";
 import Navbar from "../../components/Navbar";
 import SuccessModal from "../../components/ModalSuccess";
 import { getReport, updateReport, TAG_TO_TYPE } from "../../service/reportService";
+import { extractErrorMessage } from "../../service/api";
 import type { Report } from "../../types/report";
 
 type ReportType = "fire" | "flood" | "landslide" | "noise";
@@ -52,6 +53,7 @@ export default function EditReportPage() {
   const [isLoading, setIsLoading] = useState(!passedReport);
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   const [title, setTitle] = useState(passedReport?.title ?? "");
   const [description, setDescription] = useState(passedReport?.description ?? "");
@@ -92,8 +94,11 @@ export default function EditReportPage() {
         if (data.lat && data.lng) {
           setPosition({ lat: data.lat, lng: data.lng });
         }
+        setApiError("");
       })
-      .catch(() => {})
+      .catch((err) => {
+        setApiError(extractErrorMessage(err, "Erro ao carregar denúncia. Tente novamente."));
+      })
       .finally(() => setIsLoading(false));
   }, [id, passedReport]);
 
@@ -125,6 +130,7 @@ export default function EditReportPage() {
   const handleSave = async () => {
     if (!id) return;
     setIsSaving(true);
+    setApiError("");
     try {
       await updateReport(Number(id), {
           title,
@@ -136,8 +142,8 @@ export default function EditReportPage() {
           lng: position?.lng ?? null,
         }, imageFiles.length > 0 ? imageFiles : undefined);
       setShowSuccess(true);
-    } catch {
-      // erro silencioso
+    } catch (err) {
+      setApiError(extractErrorMessage(err, "Erro ao salvar alterações. Tente novamente."));
     } finally {
       setIsSaving(false);
     }
@@ -238,6 +244,21 @@ export default function EditReportPage() {
               />
             </SelectedFile>
           ))}
+
+          {apiError && (
+            <div
+              style={{
+                background: "#FEE2E2",
+                color: "#B91C1C",
+                padding: "12px 16px",
+                borderRadius: 8,
+                marginTop: 8,
+                fontSize: 14,
+              }}
+            >
+              {apiError}
+            </div>
+          )}
 
           <ButtonContainer>
             <BackButton onClick={() => navigate(-1)}>Cancelar</BackButton>

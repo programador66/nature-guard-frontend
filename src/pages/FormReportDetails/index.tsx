@@ -31,6 +31,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store";
 import { saveStep2, clearDraft } from "../../store/slices/reportSlice";
 import { createReport } from "../../service/reportService";
+import { extractErrorMessage } from "../../service/api";
 
 const step2Schema = yup.object({
   address: yup.string().trim().required("Endereço é obrigatório"),
@@ -63,6 +64,7 @@ export default function FormRepostDetails() {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [apiError, setApiError] = useState("");
 
   useEffect(() => {
     if (!position) return;
@@ -136,12 +138,13 @@ export default function FormRepostDetails() {
     if (!draft) return;
 
     setIsLoading(true);
+    setApiError("");
     try {
       await createReport({ ...draft, ...step2 }, imageFiles.length > 0 ? imageFiles : undefined);
       dispatch(clearDraft());
       setOpenModal(true);
-    } catch {
-      // erro silencioso
+    } catch (err) {
+      setApiError(extractErrorMessage(err, "Erro ao enviar denúncia. Tente novamente."));
     } finally {
       setIsLoading(false);
     }
@@ -226,6 +229,10 @@ export default function FormRepostDetails() {
               />
             </SelectedFile>
           ))}
+
+          {apiError && (
+            <ErrorText style={{ marginTop: 8 }}>{apiError}</ErrorText>
+          )}
 
           <ButtonContainer>
             <BackButton onClick={() => navigate(-1)}>Voltar</BackButton>
