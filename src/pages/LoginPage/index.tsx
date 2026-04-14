@@ -28,6 +28,7 @@ import {
 
 import { login } from "../../service/authService";
 import { createReport } from "../../service/reportService";
+import { extractErrorMessage } from "../../service/api";
 import { setCredentials } from "../../store/slices/authSlice";
 import { clearDraft } from "../../store/slices/reportSlice";
 import type { RootState, AppDispatch } from "../../store";
@@ -64,9 +65,7 @@ export default function LoginPage() {
         }
         navigate("/reports-list-page");
       } catch (err: unknown) {
-        const message =
-          (err as { response?: { data?: { message?: string } } })?.response
-            ?.data?.message ?? "E-mail ou senha incorretos.";
+        const message = extractErrorMessage(err, "E-mail ou senha incorretos.");
         setApiError(message);
       } finally {
         setSubmitting(false);

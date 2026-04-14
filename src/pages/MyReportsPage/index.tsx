@@ -20,6 +20,7 @@ import ReportCard from "../../components/ReportCard";
 import Navbar from "../../components/Navbar";
 import Loader from "../../components/Loader";
 import { getUserReports } from "../../service/reportService";
+import { extractErrorMessage } from "../../service/api";
 import type { RootState } from "../../store";
 import type { Report } from "../../types/report";
 import emptyIllustration from "../../assets/denuncia-mobile-02.svg";
@@ -30,13 +31,19 @@ export default function MyReportsPage() {
 
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [apiError, setApiError] = useState("");
 
   useEffect(() => {
     if (!user) return;
 
     getUserReports()
-      .then(({ data }) => setReports(data))
-      .catch(() => {})
+      .then(({ data }) => {
+        setReports(data);
+        setApiError("");
+      })
+      .catch((err) => {
+        setApiError(extractErrorMessage(err, "Erro ao carregar suas denúncias. Tente novamente."));
+      })
       .finally(() => setIsLoading(false));
   }, [user]);
 
@@ -75,7 +82,22 @@ export default function MyReportsPage() {
           Início / <span>Minhas denúncias</span>
         </Breadcrumb>
 
-        {!isLoading && reports.length === 0 ? (
+        {apiError && (
+          <div
+            style={{
+              background: "#FEE2E2",
+              color: "#B91C1C",
+              padding: "12px 16px",
+              borderRadius: 8,
+              marginBottom: 16,
+              fontSize: 14,
+            }}
+          >
+            {apiError}
+          </div>
+        )}
+
+        {!isLoading && !apiError && reports.length === 0 ? (
           <EmptyState>
             <img src={emptyIllustration} alt="Nenhuma denúncia" />
             <h3>Você ainda não fez nenhuma denúncia</h3>

@@ -9,6 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { register } from "../../service/authService";
 import { createReport } from "../../service/reportService";
+import { extractErrorMessage } from "../../service/api";
 import { setCredentials } from "../../store/slices/authSlice";
 import { clearDraft } from "../../store/slices/reportSlice";
 import type { RootState, AppDispatch } from "../../store";
@@ -91,9 +92,7 @@ export default function RegisterPage() {
           navigate("/");
         }
       } catch (err: unknown) {
-        const message =
-          (err as { response?: { data?: { message?: string } } })?.response
-            ?.data?.message ?? "Erro ao criar conta. Tente novamente.";
+        const message = extractErrorMessage(err, "Erro ao criar conta. Tente novamente.");
         setApiError(message);
         setIsLoadingReport(false);
       } finally {
